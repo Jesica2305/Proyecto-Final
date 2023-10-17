@@ -4,14 +4,13 @@ public class Principal {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Tablero tablero = new Tablero(7);
-        Barco barco = new Barco(tablero);
-        Juego juego = new Juego(tablero, barco);
+        Juego juego = new Juego(tablero);
         int filaUsuario;
         int columnaUsuario;
         /*
        Tenemos un boolean posicionValida
         */
-        boolean posicionValida = true;
+        boolean posicionValida;
         /*
        Creamos un ciclo for para hacer un recorrido de tipo barcos
         */
@@ -27,14 +26,15 @@ public class Principal {
                 System.out.print(String.format(juego.getMensajes()[i], i + 1));
                 filaUsuario = scanner.nextInt();
                 columnaUsuario = scanner.nextInt();
-                posicionValida = barco.adicionarBarco(filaUsuario, columnaUsuario, tipoBarco);
+                System.out.println("Barco ubicado en la coordenada ("+filaUsuario+","+columnaUsuario+")");
+                posicionValida = tablero.adicionarBarco(filaUsuario, columnaUsuario, tipoBarco);
                 tablero.imprimirMatriz();
-            } while (false == posicionValida);
+            } while (posicionValida== false);
         }
 
 
          int barcosRestantes = 13; // Inicialmente hay 6 barcos
-            boolean disparoAcertado = true;
+            boolean disparoAcertado;
 
         /*
         se crea el siguiente bucle para que el juego continue si los barcos restantes son mayores a 0.
@@ -44,7 +44,7 @@ public class Principal {
             System.out.print("Ingrese una coordenada (fila columna): ");
             filaUsuario = scanner.nextInt();
             columnaUsuario = scanner.nextInt();
-
+            System.out.println("Ha disparado en la coordenada ("+filaUsuario+","+columnaUsuario+")");
             /*
             se verifica si le disparo a un barco.
             */
@@ -52,7 +52,7 @@ public class Principal {
             /*
             si le dispara a un barco se decrementan los barcosRestantes
             */
-            if (disparoAcertado == true) {
+            if (disparoAcertado==true) {
                 barcosRestantes--;
 
                 if (barcosRestantes == 0) {

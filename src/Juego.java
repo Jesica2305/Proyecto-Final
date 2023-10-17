@@ -1,8 +1,7 @@
 public class Juego {
 
     private Tablero tablero;
-    private Barco barco;
-   public Juego (Tablero tablero, Barco barco){
+   public Juego (Tablero tablero){
    }
 
     /*
