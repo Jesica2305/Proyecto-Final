@@ -1,3 +1,5 @@
+package presentacion;
+
 import java.util.Scanner;
 
 public class Principal {

@@ -1,3 +1,5 @@
+package logicaNegocio;
+
 public class Tablero {
     private char[][] matriz;
     private int TAMANO;

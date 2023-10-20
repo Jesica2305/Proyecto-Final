@@ -1,3 +1,5 @@
+package logicaNegocio;
+
 public class Juego {
 
     private Tablero tablero;
