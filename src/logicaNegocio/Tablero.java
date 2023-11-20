@@ -36,20 +36,20 @@ public class Tablero {
     /*
       Entra a cada uno de los casos
       */
-            switch (tipoBarco) {
-                case 0:
-                    return barco1(f1, c1, matriz);
-                case 1:
-                    return barco2(f1, c1, matriz);
-                case 2:
-                    return barco3(f1, c1, matriz);
-                case 3:
-                    return barco4(f1, c1, matriz);
-                default:
-                    System.out.println("Barco inválido");
-                    return false;
-            }
+        switch (tipoBarco) {
+            case 0:
+                return barco1(f1, c1, matriz);
+            case 1:
+                return barco2(f1, c1, matriz);
+            case 2:
+                return barco3(f1, c1, matriz);
+            case 3:
+                return barco4(f1, c1, matriz);
+            default:
+                System.out.println("Barco inválido");
+                return false;
         }
+    }
     /*
 Nos ayuda a validar si la posicion del barco este dentro de la matriz
 */

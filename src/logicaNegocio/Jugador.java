@@ -43,7 +43,7 @@ import java.util.Scanner;
                     System.out.print("Ingrese una coordenada para disparar (fila columna): ");
                     filaUsuario = scanner.nextInt();
                     columnaUsuario = scanner.nextInt();
-                    oponente.tablero.disparos(filaUsuario, columnaUsuario);
+                    disparoAcertado = oponente.tablero.disparos(filaUsuario, columnaUsuario);
                     oponente.tablero.imprimirMatriz();
                     break;
 
