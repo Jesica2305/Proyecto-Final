@@ -1,74 +1,33 @@
 package presentacion;
 
+import logicaNegocio.Jugador;
+
 import java.util.Scanner;
 
 public class Principal {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Tablero tablero = new Tablero(7);
-        Juego juego = new Juego(tablero);
-        int filaUsuario;
-        int columnaUsuario;
-        /*
-       Tenemos un boolean posicionValida
-        */
-        boolean posicionValida;
-        /*
-       Creamos un ciclo for para hacer un recorrido de tipo barcos
-        */
-        for (int i = 0; i < juego.getTamBarcos(); i++) {
-            int tipoBarco = juego.getTiposBarcos()[i];
-            /*
-            y dentro del ciclo for creamos un ciclo do-while donde le va a mostar
-            al usuario el mensaje para que ingrese la coordenada del barco y después le
-            a pintar la matriz con el barco, pero si posicion valida esta fuera de la matriz
-            nos va a retornar un falso, y se va arepetir hasta que posicion valida sea verdadero.
-             */
-            do {
-                System.out.print(String.format(juego.getMensajes()[i], i + 1));
-                filaUsuario = scanner.nextInt();
-                columnaUsuario = scanner.nextInt();
-                System.out.println("Barco ubicado en la coordenada ("+filaUsuario+","+columnaUsuario+")");
-                posicionValida = tablero.adicionarBarco(filaUsuario, columnaUsuario, tipoBarco);
-                tablero.imprimirMatriz();
-            } while (posicionValida== false);
-        }
 
+        Jugador jugador1 = new Jugador("Jugador 1");
+        Jugador jugador2 = new Jugador("Jugador 2");
 
-         int barcosRestantes = 13; // Inicialmente hay 6 barcos
-            boolean disparoAcertado;
+        jugador1.colocarBarcos(scanner, "Jugador 1");
+        jugador2.colocarBarcos(scanner, "Jugador 2");
 
-        /*
-        se crea el siguiente bucle para que el juego continue si los barcos restantes son mayores a 0.
-        complejidad temporal: O(N) Tiempo Lineal.
-        */
-        while (barcosRestantes > 0) {
-            System.out.print("Ingrese una coordenada (fila columna): ");
-            filaUsuario = scanner.nextInt();
-            columnaUsuario = scanner.nextInt();
-            System.out.println("Ha disparado en la coordenada ("+filaUsuario+","+columnaUsuario+")");
-            /*
-            se verifica si le disparo a un barco.
-            */
-            disparoAcertado = tablero.disparos(filaUsuario, columnaUsuario);
-            /*
-            si le dispara a un barco se decrementan los barcosRestantes
-            */
-            if (disparoAcertado==true) {
-                barcosRestantes--;
-
-                if (barcosRestantes == 0) {
-                    System.out.println("¡Has hundido todos los barcos!");
-                    tablero.imprimirMatriz();
-                    break;
-                }
+        while (!jugador1.haPerdido() && !jugador2.haPerdido()) {
+            jugador1.disparar(scanner, jugador2, "jugador 1", 1);
+            if (jugador2.haPerdido()) {
+                System.out.println("¡" + jugador1.getNombre() + " ha ganado!");
+                break;
             }
-            tablero.imprimirMatriz();
+
+            jugador2.disparar(scanner, jugador1, "jugador 2",2);
+            if (jugador1.haPerdido()) {
+                System.out.println("¡" + jugador2.getNombre() + " ha ganado!");
+                break;
+            }
         }
-        /*
-        El juego se termina si no queda ningun barco en la matriz
-        */
+
         System.out.println("Fin del juego.");
     }
 }
-
