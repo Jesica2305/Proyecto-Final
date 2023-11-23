@@ -5,10 +5,14 @@ import logicaNegocio.Tablero;
 
 public class Principal {
     public static void main(String[] args) {
-        VentanaPrincipal ventanaPrincipal = new VentanaPrincipal();
+        Tablero tablero = new Tablero(7);
+        Juego juego = new Juego(tablero);
+
+        VentanaPrincipal ventanaPrincipal = new VentanaPrincipal(juego);
         ventanaPrincipal.inicializarVentana();
     }
 }
+
 
 
 
