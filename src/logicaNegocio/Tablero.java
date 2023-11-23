@@ -4,12 +4,41 @@ public class Tablero {
     private char[][] matriz;
     private int TAMANO;
 
+    /**
+     * Constructor que recibe el tamaño del tablero como parametro
+     * Inicializa la matriz con el tamaño especificado
+     * Complejidad Temporal: O(1) Tiempo constante
+     */
     public Tablero(int TAMANO) {
         this.TAMANO = TAMANO;
         matriz = new char[TAMANO][TAMANO];
         inicializarMatriz();
     }
 
+    /**
+     * Método para obtener la matriz
+     *
+     * @return Retorna la matriz
+     * Complejidad Temporal: O(1) Tiempo constante
+     */
+    public char[][] getMatriz() {
+        return matriz;
+    }
+
+    /**
+     * Método para obtener el tamaño
+     *
+     * @return Retorna el tamaño
+     * Complejidad Temporal: O(1) Tiempo constante
+     */
+    public int getTAMANO() {
+        return TAMANO;
+    }
+
+    /**
+     * Se inicia la matriz con asteriscos
+     * Complejidad Temporal: O(N^2) Complejidad cuadrática
+     */
     public void inicializarMatriz() {
         for (int i = 0; i < TAMANO; i++) {
             for (int j = 0; j < TAMANO; j++) {
@@ -18,8 +47,12 @@ public class Tablero {
         }
     }
 
-    public void imprimirMatriz() {
-        System.out.println("Tablero:");
+    /**
+     * Se imprime la matriz
+     * Complejidad Temporal: O(N^2) Complejidad cuadrática
+     */
+    /**public void imprimirMatriz() {
+        System.out.println("Matriz con barcos:");
         for (int i = 0; i < TAMANO; i++) {
             for (int j = 0; j < TAMANO; j++) {
                 System.out.print(matriz[i][j] + " ");
@@ -27,13 +60,14 @@ public class Tablero {
             System.out.println();
         }
     }
+**/
 
-    public boolean adicionarBarco(int f1, int c1, int tipoBarco) {
-        if (!posicionValida(f1) || !posicionValida(c1)) {
-            System.out.println("Posición por fuera de la matriz");
-            return false;
-        }
     /*
+  Creamos un metodo boolean que se llama adicionar barco, alli nos ayudara
+  a psoscionar el barco dentro de la matriz y sino nos retorna un false, evaluando los diferentes casos
+   */
+    public boolean adicionarBarco(int f1, int c1, int tipoBarco) {
+     /*
       Entra a cada uno de los casos
       */
         switch (tipoBarco) {
@@ -49,12 +83,6 @@ public class Tablero {
                 System.out.println("Barco inválido");
                 return false;
         }
-    }
-    /*
-Nos ayuda a validar si la posicion del barco este dentro de la matriz
-*/
-    private boolean posicionValida(int coordenada) {
-        return (coordenada >= 0 && coordenada < TAMANO);
     }
     /*
     Nos ayuda a posicionar el barco1 en la matriz con los parametros dados
@@ -132,6 +160,7 @@ Nos ayuda a validar si la posicion del barco este dentro de la matriz
         matriz[fila][columna + 3] = barco;
         return true;
     }
+
     public boolean disparos (int filaUsuario, int columnaUsuario) {
         if (filaUsuario >= 0 && filaUsuario < TAMANO && columnaUsuario >= 0 && columnaUsuario < TAMANO) {
             char objeto = matriz[filaUsuario][columnaUsuario];
@@ -158,15 +187,5 @@ Nos ayuda a validar si la posicion del barco este dentro de la matriz
         }
         return false; // Devuelve false si no se acertó un barco o la coordenada estaba fuera de rango
     }
-
-    public boolean todosBarcosDestruidos() {
-        for (int i = 0; i < TAMANO; i++) {
-            for (int j = 0; j < TAMANO; j++) {
-                if (matriz[i][j] != '*' && matriz[i][j] != '.' && matriz[i][j] != '/') {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 }
+
