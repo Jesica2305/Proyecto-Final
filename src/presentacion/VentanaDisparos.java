@@ -15,6 +15,7 @@ public class VentanaDisparos extends JFrame {
     private int disparosAcertados = 0;
 
     public VentanaDisparos(Juego juego) {
+        // Constructor de la calse VentanaDisparos
         this.juego = juego;
 
         // Configuración de la ventana
@@ -106,6 +107,7 @@ public class VentanaDisparos extends JFrame {
                     break;
             }
         } else if (barcoUbicado != '*') {
+            
             // Mostrar el barco en el panel después del disparo
             button.setText(Character.toString(barcoUbicado));
         }
