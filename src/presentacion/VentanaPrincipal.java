@@ -7,13 +7,19 @@ import javax.swing.*;
 import java.awt.*;
 
 public class VentanaPrincipal extends JFrame {
+    // Declaracion de variable//
+    
     private JPanel pnlPrincipal;
     private JPanel pnlJuego;
     private Juego juego;
     private Tablero tablero = new Tablero(7);
-    private boolean colocandoBarcosUsuario1 = true; // Bandera para alternar entre los jugadores
+    private boolean colocandoBarcosUsuario1 = true; 
+    // Bandera para alternar entre los jugadores//
 
     public VentanaPrincipal(Juego juego) {
+
+        // Constructor de la clase,inicializacion la ventana principal //
+        
         this.juego = new Juego(tablero);
         tablero = this.juego.getTablero();
         tablero.cambiarEstadoVisualizacionBarcos(true);
@@ -22,20 +28,30 @@ public class VentanaPrincipal extends JFrame {
         inicializarVentana();
         construirInterfaz();
     }
+    //Metodos privados para mostrar mnsajes informativos 
     private void importante() {
+
+        //Mensaje informativo sobre las reglas del juego 
+        
         JOptionPane.showMessageDialog(this, "¡Bienvenido a Batalla Naval!\n\nRECOMENDACIONES IMPORTANTES:\n- Cada letra significa el tamaño de un barco\n * Letra A: Es un barco que ocupa una casilla \n Cantidad de barcos tipo A:2 \n *Letra B: Este barco ocupa dos casillas \n Cantidad de barcos tipo B: 2 \n *Letra C: Este barco ocupa tres casillas \n Cantidad de barcos tipo C: 1  \n *Letra D: Este barco ocupa cuatro casillas \n Cantidad de barcos tipo D: 1   \n- RECOMENDACIÓN: si el barco ocupa 2 o mas casillas usted puede ubicarlo la direccion que desee.\n\n¡Diviértete!");
     }
     private void mostrarInfo() {
+        // Mensaje de bienvenida e instrucciones del juego //
         JOptionPane.showMessageDialog(this, "¡Bienvenido a Batalla Naval!\n\nInstrucciones:\n- Coloca tus barcos haciendo clic en las casillas del tablero.\n- Para disparar, haz clic en las casillas del tablero del oponente.\n\n¡Diviértete!");
     }
     private void barcoNoubicado() {
+        // Indica que un barco no ha sido ubicado //
         JOptionPane.showMessageDialog(this, "el barco no se ha ubicado");
     }
     private void barcosubicado() {
+        // Todos los barcos han sido ubicados //
         JOptionPane.showMessageDialog(this, "Todos los barcos han sido colocados.");
     }
     private void construirInterfaz() {
+        //Configuracion de la interfaz grafica del juego (tablero)
         setTitle("Batalla Naval");
+
+        
 
         pnlPrincipal = new JPanel(new GridLayout(7, 7)); // Matriz de 7x7
 
@@ -57,15 +73,22 @@ public class VentanaPrincipal extends JFrame {
         pack();
     }
 
-
+// Inicializacion del juego y configuracion incial del tablero //
     private void iniciarJuego() {
         Tablero tablero = new Tablero(7);
         juego = new Juego(tablero);
-        tablero.cambiarEstadoVisualizacionBarcos(true); // Muestra la ubicación de los barcos al inicio
+        
+         // Muestra la ubicación de los barcos al inicio
+        tablero.cambiarEstadoVisualizacionBarcos(true); 
         construirInterfaz();
-        tablero.cambiarEstadoVisualizacionBarcos(false); // Oculta la ubicación de los barcos para comenzar los disparos
-        imprimirTablero(tablero.getMatriz()); // Imprime la matriz con los botones en '*'
+        tablero.cambiarEstadoVisualizacionBarcos(false);
+        
+        // Oculta la ubicación de los barcos para comenzar los disparos
+        imprimirTablero(tablero.getMatriz());
+        // Imprime la matriz con los botones en '*'
     }
+
+    // Configuracion inicial de la ventana principal del juego//
     public void inicializarVentana() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize);
@@ -73,8 +96,10 @@ public class VentanaPrincipal extends JFrame {
         iniciarJuego();
     }
 
+    // metodo para imprimir y actualizar la presentacion visual del tablero ///
     private void imprimirTablero(char[][] matriz) {
-        pnlJuego.removeAll(); // Limpiamos los botones anteriores antes de imprimir el nuevo tablero
+         // Limpiamos los botones anteriores antes de imprimir el nuevo tablero
+        pnlJuego.removeAll();
 
         for (int i = 0; i < matriz.length; i++) {
             for (int j = 0; j < matriz[i].length; j++) {
@@ -108,8 +133,11 @@ public class VentanaPrincipal extends JFrame {
         repaint();
     }
 
-    private int tipoBarcoActualIndex = 0; // Usaremos un índice para seguir el tipo de barco actual
+    private int tipoBarcoActualIndex = 0; 
+    // Usaremos un índice para seguir el tipo de barco actual
 
+
+    // Logica para que el jugador  ubique sus barcos en el tablero //
     private void botonPresionadoUsuario1(int fila, int columna) {
         char[][] matriz = tablero.getMatriz();
         if (tipoBarcoActualIndex < juego.getTiposBarcos().length && matriz[fila][columna] == '*') {
@@ -168,6 +196,8 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 
+
+    //Logica para que el jugador 2 realice disparos contra el tablero del jugador 1
     private void botonPresionadoUsuario2(int fila, int columna) {
         char resultadoDisparo = juego.realizarDisparo(fila, columna);
 
@@ -177,7 +207,11 @@ public class VentanaPrincipal extends JFrame {
             System.out.println("No hay un barco en esa coordenada.");
         }
     }
+
+    //Metodo para manejar el clic en un boton (dependiendo del estado del juego 
     private void botonPresionado(int fila, int columna) {
+
+        // Maneja los clics en los botones segun el jugador activo
         if (colocandoBarcosUsuario1==true) {
             botonPresionadoUsuario1(fila, columna);
         } else {
