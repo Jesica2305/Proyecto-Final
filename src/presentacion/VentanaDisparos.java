@@ -14,8 +14,10 @@ public class VentanaDisparos extends JFrame {
     private Juego juego;
     private int disparosAcertados = 0;
 
+    /**
+      * Constructor que configura la ventana y obtiene el tablero
+      */
     public VentanaDisparos(Juego juego) {
-        // Constructor de la calse VentanaDisparos
         this.juego = juego;
 
         // Configuración de la ventana
@@ -55,6 +57,11 @@ public class VentanaDisparos extends JFrame {
         pack();
     }
 
+    /**
+      * Realiza disparo en la posición indicada 
+      * Actualiza tablero
+      *Verifica si los barcos ya han sido disparados para finalizar el juego
+      */
     private void botonDisparoPresionado(int fila, int columna) {
         char resultadoDisparo = tablero.realizarDisparo(fila, columna);
 
@@ -69,9 +76,7 @@ public class VentanaDisparos extends JFrame {
             JOptionPane.showMessageDialog(this,"No hay un barco en esa coordenada.");
         }
 
-        // Actualizar visualmente el tablero después del disparo
         actualizarTableroDisparos(fila, columna, resultadoDisparo, tablero.getUbicacionBarcos()[fila][columna]);
-        // Verifica si se han acertado todos los disparos
         if (disparosAcertados == 13) {
             int opcion = JOptionPane.showOptionDialog(this, "¡Felicidades! ¿Quieres jugar de nuevo?", "Fin del juego",
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Sí", "No"}, "Sí");
@@ -90,7 +95,9 @@ public class VentanaDisparos extends JFrame {
 
 
 
-    // Método para actualizar la interfaz gráfica después del disparo
+    /**
+    *Método para actualizar la interfaz gráfica después del disparo
+    */
     private void actualizarTableroDisparos(int fila, int columna, char resultadoDisparo, char barcoUbicado) {
         int index = fila * tablero.getTAMANO() + columna;
         JButton button = (JButton) pnlJuego.getComponent(index);
@@ -112,6 +119,9 @@ public class VentanaDisparos extends JFrame {
             button.setText(Character.toString(barcoUbicado));
         }
     }
+    /**
+    *Muestra la ubicacion de los barcos con su respectivo tamaño
+    */
     private void mostrarBarcos(char[][] ubicacionBarcos) {
         int buttonWidth = pnlJuego.getWidth() / 7; // Ancho estimado del botón en el panel
         int buttonHeight = pnlJuego.getHeight() / 7; // Alto estimado del botón en el panel
