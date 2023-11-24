@@ -15,9 +15,15 @@ public class VentanaPrincipal extends JFrame {
 
     public VentanaPrincipal(Juego juego) {
         this.juego = new Juego(tablero);
+        tablero = this.juego.getTablero();
+        tablero.cambiarEstadoVisualizacionBarcos(true);
         mostrarInfo();
+        importante();
         inicializarVentana();
         construirInterfaz();
+    }
+    private void importante() {
+        JOptionPane.showMessageDialog(this, "¡Bienvenido a Batalla Naval!\n\nRECOMENDACIONES IMPORTANTES:\n- Cada letra significa el tamaño de un barco\n * Letra A: Es un barco que ocupa una casilla \n Cantidad de barcos tipo A:2 \n *Letra B: Este barco ocupa dos casillas \n Cantidad de barcos tipo B: 2 \n *Letra C: Este barco ocupa tres casillas \n Cantidad de barcos tipo C: 1  \n *Letra D: Este barco ocupa cuatro casillas \n Cantidad de barcos tipo D: 1   \n- RECOMENDACIÓN: si el barco ocupa 2 o mas casillas usted puede ubicarlo la direccion que desee.\n\n¡Diviértete!");
     }
     private void mostrarInfo() {
         JOptionPane.showMessageDialog(this, "¡Bienvenido a Batalla Naval!\n\nInstrucciones:\n- Coloca tus barcos haciendo clic en las casillas del tablero.\n- Para disparar, haz clic en las casillas del tablero del oponente.\n\n¡Diviértete!");
@@ -25,24 +31,41 @@ public class VentanaPrincipal extends JFrame {
     private void barcoNoubicado() {
         JOptionPane.showMessageDialog(this, "el barco no se ha ubicado");
     }
+    private void barcosubicado() {
+        JOptionPane.showMessageDialog(this, "Todos los barcos han sido colocados.");
+    }
     private void construirInterfaz() {
         setTitle("Batalla Naval");
 
-        pnlPrincipal = new JPanel(new BorderLayout());
-        pnlJuego = new JPanel(new GridLayout(tablero.getTAMANO(), tablero.getTAMANO()));
+        pnlPrincipal = new JPanel(new GridLayout(7, 7)); // Matriz de 7x7
 
-        imprimirTablero(tablero.getMatriz());
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                JButton button = new JButton();
+                button.setText("*"); // Configuramos el texto inicial como '*'
 
-        pnlPrincipal.add(pnlJuego, BorderLayout.CENTER);
+                // Agregamos un ActionListener para manejar los clics en los botones
+                int finalI = i;
+                int finalJ = j;
+                button.addActionListener(e -> botonPresionadoUsuario1(finalI, finalJ));
+
+                pnlPrincipal.add(button);
+            }
+        }
+
         setContentPane(pnlPrincipal);
+        pack();
     }
+
 
     private void iniciarJuego() {
-        Tablero tablero = new Tablero(7); // Ajusta el tamaño del tablero según sea necesario
-        juego = new Juego(tablero); // Inicializa el juego con el tablero
+        Tablero tablero = new Tablero(7);
+        juego = new Juego(tablero);
+        tablero.cambiarEstadoVisualizacionBarcos(true); // Muestra la ubicación de los barcos al inicio
         construirInterfaz();
+        tablero.cambiarEstadoVisualizacionBarcos(false); // Oculta la ubicación de los barcos para comenzar los disparos
+        imprimirTablero(tablero.getMatriz()); // Imprime la matriz con los botones en '*'
     }
-
     public void inicializarVentana() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize);
@@ -57,15 +80,25 @@ public class VentanaPrincipal extends JFrame {
             for (int j = 0; j < matriz[i].length; j++) {
                 int fila = i;
                 int columna = j;
-                JButton button = new JButton("*");
+                JButton button = new JButton();
 
-                button.addActionListener(e -> {
-                    if (colocandoBarcosUsuario1) {
-                        botonPresionadoUsuario1(fila, columna);
-                    } else {
-                        botonPresionadoUsuario2(fila, columna);
-                    }
-                });
+                // Establece el estado del botón según la matriz
+                switch (matriz[i][j]) {
+                    case '*':
+                        button.setText("*"); // Casilla vacía
+                        break;
+                    case '/':
+                        button.setText("/"); // Disparo acertado
+                        break;
+                    case '.':
+                        button.setText("."); // Disparo fallado
+                        break;
+                    default:
+                        button.setText(Character.toString(matriz[i][j])); // Para otros caracteres específicos (barcos)
+                        break;
+                }
+
+                button.addActionListener(e -> botonPresionado(fila, columna)); // Agrega ActionListener al botón
 
                 pnlJuego.add(button);
             }
@@ -75,23 +108,65 @@ public class VentanaPrincipal extends JFrame {
         repaint();
     }
 
+    private int tipoBarcoActualIndex = 0; // Usaremos un índice para seguir el tipo de barco actual
 
     private void botonPresionadoUsuario1(int fila, int columna) {
-        for (int i = 1; i < 6; i++) {
-            System.out.print("Ingrese la coordenada del barco " + i + " (fila columna): ");
-            boolean barco = juego.colocarBarco(fila, columna, i - 1);
-            if (barco) {
-                int numero = juego.getTiposBarcos()[i - 1];
-                boton(fila, columna, numero);
-                System.out.println("Barco en posición");
-            } else {
-                System.out.println("No se pudo colocar el barco en esta posición.");
-                barcoNoubicado();
-                return;
+        char[][] matriz = tablero.getMatriz();
+        if (tipoBarcoActualIndex < juego.getTiposBarcos().length && matriz[fila][columna] == '*') {
+            int tipoBarco = juego.getTiposBarcos()[tipoBarcoActualIndex];
+
+            switch (tipoBarco) {
+                case 0: // Tipo de barco 'D'
+                    juego.colocarBarco(fila,columna,0);
+                    tablero.actualizarUbicacionBarcos(fila, columna, 'D');
+                    break;
+                case 1: // Tipo de barco 'A'
+                    juego.colocarBarco(fila, columna, 1);
+                    tablero.actualizarUbicacionBarcos(fila, columna, 'A');
+
+                case 2: // Tipo de barco 'C'
+                    if (columna > -1) {
+                        juego.colocarBarco(fila, columna, 2);
+                        tablero.actualizarUbicacionBarcos(fila, columna, 'C');
+                    } else {
+                        barcoNoubicado();
+                        return;
+                    }
+                    break;
+                case 3: // Tipo de barco 'E'
+                    if (columna > -1) {
+                        juego.colocarBarco(fila, columna, 3);
+                        tablero.actualizarUbicacionBarcos(fila, columna, 'E');
+                    } else {
+                        barcoNoubicado();
+                        return;
+                    }
+                    imprimirTablero(matriz);
+                    break;
+                default:
+                    break;
             }
+
+            JButton button = (JButton) pnlPrincipal.getComponent(fila * 7 + columna);
+            button.setText(String.valueOf((char) (tipoBarco + 'A'))); // Actualiza el texto del botón
+
+            tablero.actualizarUbicacionBarcos(fila, columna, (char) (tipoBarco + 'A'));
+
+            tipoBarcoActualIndex++; // Avanza al siguiente tipo de barco
+
+            if (tipoBarcoActualIndex >= juego.getTiposBarcos().length) {
+                // Llama al método para restablecer la visualización del tablero
+                barcosubicado();
+                colocandoBarcosUsuario1 = false;
+
+                VentanaDisparos ventanaDisparos = new VentanaDisparos(juego);
+                ventanaDisparos.setVisible(true);
+                this.dispose();
+            }
+        } else {
+            barcoNoubicado();
         }
     }
-
 
     private void botonPresionadoUsuario2(int fila, int columna) {
         char resultadoDisparo = juego.realizarDisparo(fila, columna);
@@ -102,155 +177,15 @@ public class VentanaPrincipal extends JFrame {
             System.out.println("No hay un barco en esa coordenada.");
         }
     }
+    private void botonPresionado(int fila, int columna) {
+        if (colocandoBarcosUsuario1==true) {
+            botonPresionadoUsuario1(fila, columna);
+        } else {
+            botonPresionadoUsuario2(fila, columna);
 
-    /**
-     * private boolean realizarMovimientoUsuario1(int x, int y) {
-     * if (colocandoBarcosUsuario1) {
-     * boolean barcoColocado = juego.colocarBarco(x, y);
-     * imprimirTablero(tablero.getMatriz());
-     * <p>
-     * return barcoColocado;
-     * }
-     * return false;
-     * }
-     **/
-    private char realizarDisparoUsuario2(int x, int y) {
-        char resultadoDisparo = tablero.getMatriz()[x][y];
-        imprimirTablero(tablero.getMatriz());
-
-        return resultadoDisparo;
-    }
-
-    private JButton[] boton(int fila, int columna, int numero) {
-        JButton[] buttons = new JButton[4]; // La cantidad máxima de botones es 4
-
-        if (numero == 0) {
-            buttons[0] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna);
-            buttons[0].setText("D");
-        } else if (numero == 1) {
-            if (fila < tablero.getTAMANO() - 1) {
-                buttons[0] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna);
-                buttons[1] = (JButton) pnlJuego.getComponent((fila + 1) * tablero.getTAMANO() + columna);
-                buttons[0].setText("A");
-                buttons[1].setText("A");
-            } else {
-                System.out.println("Espacio insuficiente para el barco tipo A.");
-                barcoNoubicado();
-                return null;
-            }
-        } else if (numero == 2) {
-            if (columna < tablero.getTAMANO() - 2) {
-                buttons[0] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna);
-                buttons[1] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna + 1);
-                buttons[2] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna + 2);
-                buttons[0].setText("C");
-                buttons[1].setText("C");
-                buttons[2].setText("C");
-            } else {
-                System.out.println("Espacio insuficiente para el barco tipo C.");
-                barcoNoubicado();
-                return null;
-            }
-        } else if (numero == 3) {
-            if (columna < tablero.getTAMANO() - 3) {
-                buttons[0] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna);
-                buttons[1] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna + 1);
-                buttons[2] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna + 2);
-                buttons[3] = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna + 3);
-                buttons[0].setText("E");
-                buttons[1].setText("E");
-                buttons[2].setText("E");
-                buttons[3].setText("E");
-            } else {
-                System.out.println("Espacio insuficiente para el barco tipo E.");
-                barcoNoubicado();
-                return null;
-            }
-        }
-
-        return buttons;
-    }
-}
-
-/**public VentanaPrincipal(Juego juego) {
-    this.juego = new Juego(tablero);
-    inicializarVentana();
-}
-
-
-
-
-
-private void construirInterfaz() {
-    setTitle("Batalla Naval");
-
-    pnlPrincipal = new JPanel(new BorderLayout());
-    pnlJuego = new JPanel(new GridLayout(tablero.getTAMANO(), tablero.getTAMANO()));
-
-    imprimirTablero(tablero.getMatriz());
-
-    pnlPrincipal.add(pnlJuego, BorderLayout.CENTER);
-    setContentPane(pnlPrincipal);
-}
-
-// En la clase VentanaPrincipal, dentro del método imprimirTablero
-
-private void imprimirTablero(char[][] matriz) {
-    for (int i = 0; i < matriz.length; i++) {
-        for (int j = 0; j < matriz[i].length; j++) {
-            int fila = i;
-                public void actionPerformed(ActionEvent e) {
-                    // Llamamos a un método en VentanaPrincipal para manejar la interacción
-                    botonPresionado(fila, columna);
-                }
-            });
-
-            pnlJuego.add(button);
-
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    botonPresionado(fila1, columna1);
-                }
-            });
         }
     }
 }
-
-// Agregamos un método en VentanaPrincipal para manejar la lógica de interacción
-
-private void botonPresionado(int fila, int columna) {
-    // Aquí llamamos a los métodos del juego y tablero para realizar la acción
-    boolean barcoColocado = realizarMovimiento(fila, columna);
-    imprimirTablero(tablero.getMatriz());
-
-    JButton button = (JButton) pnlJuego.getComponent(fila * tablero.getTAMANO() + columna);
-
-    if (barcoColocado) {
-        button.setText("B");
-        button.setEnabled(false);
-    } else {
-        System.out.println("No se pudo colocar el barco en esta posición.");
-    }
-}
-
-private boolean realizarMovimiento(int x, int y) {
-    boolean barcoColocado = juego.colocarBarco(x, y);
-    imprimirTablero(tablero.getMatriz());
-
-    JButton button = (JButton) pnlJuego.getComponent(x * tablero.getTAMANO() + y);
-
-    if (barcoColocado==true) {
-        button.setText("B"); // Cambiar la representación visual para indicar un barco
-        button.setEnabled(false); // Deshabilitar el botón para no permitir más colocación en esa casilla
-    } else {
-        System.out.println("No se pudo colocar el barco en esta posición.");
-    }
-    return false;
-}
-}
-**/
-
 
 
 
