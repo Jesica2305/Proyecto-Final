@@ -18,25 +18,12 @@ public class Juego {
         return tamBarcos;
     }
 
-    public boolean colocarBarco(int fila, int columna,int i) {
-        boolean posicionValida = false;
-
-            tamBarcos = getTiposBarcos()[i];
-
-
-            posicionValida = tablero.adicionarBarco(fila, columna, tamBarcos);
-
-
-            if (posicionValida) {
-                return true;
-            } else {
-             System.out.println("No se pudo colocar el barco en esta posición.");
-            return false;
-    }
+    public boolean colocarBarco(int fila, int columna, int i) {
+        int tamBarcos = getTiposBarcos()[i];
+        return tablero.adicionarBarco(fila, columna, tamBarcos);
     }
 
     public char realizarDisparo(int fila, int columna) {
         return tablero.realizarDisparo(fila, columna);
     }
 }
-
